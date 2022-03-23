@@ -14,10 +14,11 @@ import (
 	"os/signal"
 	"runtime"
 	"runtime/pprof"
+	"strings"
 	"syscall"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/buger/goreplay/ghz"
 )
 
 var (
@@ -89,11 +90,16 @@ func main() {
 		plugins = NewPlugins()
 	}
 
-	go func() {
-		http.Handle("/metrics", promhttp.Handler())
-		log.Fatal(http.ListenAndServe(":8081", nil))
-	}()
-	log.Printf("Started Prometheus client at port: %d", 8081)
+	// TODO: Add back when prom is needed.
+	// go func() {
+	// 	http.Handle("/metrics", promhttp.Handler())
+	// 	log.Fatal(http.ListenAndServe(":8081", nil))
+	// }()
+	// log.Printf("Started Prometheus client at port: %d", 8081)
+
+	currentCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(Settings.NumCPU)
+	defer runtime.GOMAXPROCS(currentCPU)
 
 	log.Printf("[PPID %d and PID %d] Version:%s\n", os.Getppid(), os.Getpid(), VERSION)
 
@@ -116,7 +122,8 @@ func main() {
 	}
 
 	closeCh := make(chan int)
-	emitter := NewEmitter()
+	reporter := ghz.NewReporter(Settings.Name, Settings.SkipFirst, Settings.CountErrorLatency)
+	emitter := NewEmitter(reporter)
 	go emitter.Start(plugins, Settings.Middleware)
 	if Settings.ExitAfter > 0 {
 		log.Printf("Running gor for a duration of %s\n", Settings.ExitAfter)
@@ -128,14 +135,41 @@ func main() {
 	}
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	var report *ghz.Report
 	exit := 0
 	select {
 	case <-c:
+		report = reporter.Stop(ghz.ReasonCancel)
 		exit = 1
 	case <-closeCh:
+		report = reporter.Stop(ghz.ReasonNormalEnd)
 		exit = 0
 	}
 	emitter.Close()
+
+	output := os.Stdout
+	outputPath := strings.TrimSpace(Settings.OutputPath)
+	if outputPath != "" {
+		f, err := os.Create(outputPath)
+		if err != nil {
+			log.Panicf("Error opening file "+outputPath+": "+err.Error(),
+				"error", err)
+
+			handleError(err)
+		}
+
+		defer func() {
+			handleError(f.Close())
+		}()
+
+		output = f
+	}
+
+	p := ghz.ReportPrinter{
+		Report: report,
+		Out:    output,
+	}
+	handleError(p.Print(Settings.OutputFormat))
 	os.Exit(exit)
 }
 
@@ -164,5 +198,14 @@ func profileMEM(memprofile string) {
 			pprof.WriteHeapProfile(f)
 			f.Close()
 		})
+	}
+}
+
+func handleError(err error) {
+	if err != nil {
+		if errString := err.Error(); errString != "" {
+			fmt.Fprintln(os.Stderr, errString)
+		}
+		os.Exit(1)
 	}
 }

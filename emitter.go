@@ -8,18 +8,20 @@ import (
 	"sync"
 
 	"github.com/buger/goreplay/byteutils"
+	"github.com/buger/goreplay/ghz"
 	"github.com/coocood/freecache"
 )
 
 // Emitter represents an abject to manage plugins communication
 type Emitter struct {
 	sync.WaitGroup
-	plugins *InOutPlugins
+	plugins  *InOutPlugins
+	reporter *ghz.Reporter
 }
 
 // NewEmitter creates and initializes new Emitter object.
-func NewEmitter() *Emitter {
-	return &Emitter{}
+func NewEmitter(reporter *ghz.Reporter) *Emitter {
+	return &Emitter{reporter: reporter}
 }
 
 // Start initialize loop for sending data from inputs to outputs
@@ -28,6 +30,8 @@ func (e *Emitter) Start(plugins *InOutPlugins, middlewareCmd string) {
 		Settings.CopyBufferSize = 5 << 20
 	}
 	e.plugins = plugins
+
+	e.reporter.Run()
 
 	if middlewareCmd != "" {
 		middleware := NewMiddleware(middlewareCmd)

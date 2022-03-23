@@ -62,9 +62,15 @@ func (h *MultiIntOption) Set(value string) error {
 
 // AppSettings is the struct of main configuration
 type AppSettings struct {
-	Verbose   int           `json:"verbose"`
-	Stats     bool          `json:"stats"`
-	ExitAfter time.Duration `json:"exit-after"`
+	Name              string        `json:"name"`
+	NumCPU            int           `json:"num-cpu"`
+	SkipFirst         int           `json:"skip-first"`
+	CountErrorLatency bool          `json:"count-error-latency"`
+	Verbose           int           `json:"verbose"`
+	OutputPath        string        `json:"output-path"`
+	OutputFormat      string        `json:"output-format"`
+	Stats             bool          `json:"stats"`
+	ExitAfter         time.Duration `json:"exit-after"`
 
 	SplitOutput          bool   `json:"split-output"`
 	RecognizeTCPSessions bool   `json:"recognize-tcp-sessions"`
@@ -132,6 +138,13 @@ func init() {
 	} else {
 		Settings.ExitAfter = 5 * time.Minute
 	}
+
+	flag.IntVar(&Settings.SkipFirst, "skip-first", 0, "Skip the first number of results.")
+	flag.IntVar(&Settings.NumCPU, "num-cpu", 1, "Num of CPU to use. Default to 1.")
+	flag.StringVar(&Settings.Name, "name", "default", "Num of the test.")
+	flag.BoolVar(&Settings.CountErrorLatency, "count-error-latency", false, "Whether or not to include latency from errors in the output.")
+	flag.StringVar(&Settings.OutputPath, "output-path", "", "Output path of the report.")
+	flag.StringVar(&Settings.OutputFormat, "output-format", "summary", "Output report format. Options:<summary/json/yaml> ")
 
 	flag.BoolVar(&Settings.SplitOutput, "split-output", false, "By default each output gets same traffic. If set to `true` it splits traffic equally among all outputs.")
 	flag.BoolVar(&Settings.RecognizeTCPSessions, "recognize-tcp-sessions", false, "[PRO] If turned on http output will create separate worker for each TCP session. Splitting output will session based as well.")
