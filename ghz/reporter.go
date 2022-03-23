@@ -12,9 +12,15 @@ import (
 // Max size of the buffer of result channel.
 const maxResult = 1000000
 
+var ResultChannel chan *CallResult
+
+func init() {
+	ResultChannel = make(chan *CallResult, min(1000, maxResult))
+}
+
 func NewReporter(name string, skipFirst int, countErrorLatency bool) *Reporter {
 	return &Reporter{
-		results:        make(chan *callResult, min(1000, maxResult)),
+		results:        ResultChannel,
 		done:           make(chan bool, 1),
 		details:        make([]ResultDetail, 0, maxResult),
 		statusCodeDist: make(map[string]int),
@@ -44,19 +50,19 @@ func (r *Reporter) Track() {
 
 		errStr := ""
 		r.totalCount++
-		r.totalLatenciesSec += res.duration.Seconds()
-		r.statusCodeDist[res.status]++
+		r.totalLatenciesSec += res.Duration.Seconds()
+		r.statusCodeDist[res.Status]++
 
-		if res.err != nil {
-			errStr = res.err.Error()
+		if res.Err != nil {
+			errStr = res.Err.Error()
 			r.errorDist[errStr]++
 		}
 
 		if len(r.details) < maxResult {
 			r.details = append(r.details, ResultDetail{
-				Latency:   res.duration,
-				Timestamp: res.timestamp,
-				Status:    res.status,
+				Latency:   res.Duration,
+				Timestamp: res.Timestamp,
+				Status:    res.Status,
 				Error:     errStr,
 			})
 		}

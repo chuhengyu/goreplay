@@ -13,6 +13,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/buger/goreplay/ghz"
 	"github.com/buger/goreplay/metrics"
 	"github.com/buger/goreplay/size"
 )
@@ -222,7 +223,9 @@ func (o *HTTPOutput) sendRequest(client *HTTPClient, msg *Message) {
 	start := time.Now()
 	req, resp, err := client.Send(msg.Data)
 	stop := time.Now()
-	elapse := time.Since(start)
+	elapse := stop.Sub(start)
+	ghz.ResultChannel <- &ghz.CallResult{Err: err, Status: resp.Status, Duration: elapse, Timestamp: stop}
+
 	metrics.ObserveTotalRequestsTimeHistogram(req.RequestURI, float64(elapse.Milliseconds()))
 	metrics.IncreaseTotalRequests(req.RequestURI, fmt.Sprint(resp.StatusCode))
 

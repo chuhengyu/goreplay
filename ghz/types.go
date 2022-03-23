@@ -13,18 +13,18 @@ type ResultDetail struct {
 }
 
 // result of a call
-type callResult struct {
-	err       error
-	status    string
-	duration  time.Duration
-	timestamp time.Time
+type CallResult struct {
+	Err       error
+	Status    string
+	Duration  time.Duration
+	Timestamp time.Time
 }
 
 // Reporter gathers all the results
 type Reporter struct {
 	config            *RunConfig
 	start             time.Time
-	results           chan *callResult
+	results           chan *CallResult
 	done              chan bool
 	totalLatenciesSec float64
 	details           []ResultDetail
