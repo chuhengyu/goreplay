@@ -16,6 +16,8 @@ import (
 	"runtime/pprof"
 	"syscall"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -86,6 +88,12 @@ func main() {
 		checkSettings()
 		plugins = NewPlugins()
 	}
+
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		log.Fatal(http.ListenAndServe(":8081", nil))
+	}()
+	log.Printf("Started Prometheus client at port: %d", 8081)
 
 	log.Printf("[PPID %d and PID %d] Version:%s\n", os.Getppid(), os.Getpid(), VERSION)
 

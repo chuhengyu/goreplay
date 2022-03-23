@@ -13,6 +13,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/buger/goreplay/metrics"
 	"github.com/buger/goreplay/size"
 )
 
@@ -212,14 +213,18 @@ func (o *HTTPOutput) PluginRead() (*Message, error) {
 }
 
 func (o *HTTPOutput) sendRequest(client *HTTPClient, msg *Message) {
+	metrics.IncreaseSubRequests()
 	if !isRequestPayload(msg.Meta) {
 		return
 	}
 
 	uuid := payloadID(msg.Meta)
 	start := time.Now()
-	resp, err := client.Send(msg.Data)
+	req, resp, err := client.Send(msg.Data)
 	stop := time.Now()
+	elapse := time.Since(start)
+	metrics.ObserveTotalRequestsTimeHistogram(req.RequestURI, float64(elapse.Milliseconds()))
+	metrics.IncreaseTotalRequests(req.RequestURI, fmt.Sprint(resp.StatusCode))
 
 	if err != nil {
 		Debug(1, fmt.Sprintf("[HTTP-OUTPUT] error when sending: %q", err))
@@ -229,12 +234,13 @@ func (o *HTTPOutput) sendRequest(client *HTTPClient, msg *Message) {
 		return
 	}
 
+	data, _ := httputil.DumpResponse(resp, true)
 	if o.config.TrackResponses {
-		o.responses <- &response{resp, uuid, start.UnixNano(), stop.UnixNano() - start.UnixNano()}
+		o.responses <- &response{data, uuid, start.UnixNano(), stop.UnixNano() - start.UnixNano()}
 	}
 
 	if o.elasticSearch != nil {
-		o.elasticSearch.ResponseAnalyze(msg.Data, resp, start, stop)
+		o.elasticSearch.ResponseAnalyze(msg.Data, data, start, stop)
 	}
 }
 
@@ -284,18 +290,18 @@ func NewHTTPClient(config *HTTPOutputConfig) *HTTPClient {
 }
 
 // Send sends an http request using client create by NewHTTPClient
-func (c *HTTPClient) Send(data []byte) ([]byte, error) {
+func (c *HTTPClient) Send(data []byte) (*http.Request, *http.Response, error) {
 	var req *http.Request
 	var resp *http.Response
 	var err error
 
 	req, err = http.ReadRequest(bufio.NewReader(bytes.NewReader(data)))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// we don't send CONNECT or OPTIONS request
 	if req.Method == http.MethodConnect {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	if !c.config.OriginalHost {
@@ -317,11 +323,11 @@ func (c *HTTPClient) Send(data []byte) ([]byte, error) {
 
 	resp, err = c.Client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if c.config.TrackResponses {
-		return httputil.DumpResponse(resp, true)
+		return req, resp, nil
 	}
 	_ = resp.Body.Close()
-	return nil, nil
+	return req, resp, nil
 }

@@ -15,11 +15,12 @@ require (
 	github.com/mattbaird/elastigo v0.0.0-20170123220020-2fe47fd29e4b
 	github.com/onsi/gomega v1.10.3 // indirect
 	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
+	github.com/prometheus/client_golang v1.12.1
 	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63
-	golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e
+	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9
 	k8s.io/apimachinery v0.23.3
 	k8s.io/client-go v0.23.3
 )
