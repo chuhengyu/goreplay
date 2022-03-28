@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/buger/goreplay/capture"
-	"github.com/buger/goreplay/proto"
-	"github.com/buger/goreplay/tcp"
+	"github.com/chuhengyu/goreplay/capture"
+	"github.com/chuhengyu/goreplay/proto"
+	"github.com/chuhengyu/goreplay/tcp"
 )
 
 const testRawExpire = time.Millisecond * 200

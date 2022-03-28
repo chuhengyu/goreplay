@@ -3,8 +3,8 @@
 //
 // For questions use GitHub or support@goreplay.org
 //
-// GoReplay: https://github.com/buger/goreplay
-// Middleware package: https://github.com/buger/goreplay/middleware
+// GoReplay: https://github.com/chuhengyu/goreplay
+// Middleware package: https://github.com/chuhengyu/goreplay/middleware
 
 var middleware;
 

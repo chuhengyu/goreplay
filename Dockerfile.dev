@@ -8,7 +8,7 @@ RUN wget http://www.tcpdump.org/release/libpcap-1.10.0.tar.gz && tar xzf libpcap
 RUN go get github.com/google/gopacket
 RUN go get -u golang.org/x/lint/golint
 
-WORKDIR /go/src/github.com/buger/goreplay/
-ADD . /go/src/github.com/buger/goreplay/
+WORKDIR /go/src/github.com/chuhengyu/goreplay/
+ADD . /go/src/github.com/chuhengyu/goreplay/
 
 RUN go get

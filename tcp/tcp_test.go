@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/buger/goreplay/proto"
+	"github.com/chuhengyu/goreplay/proto"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 )

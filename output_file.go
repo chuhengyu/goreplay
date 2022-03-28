@@ -17,7 +17,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/buger/goreplay/size"
+	"github.com/chuhengyu/goreplay/size"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")

@@ -134,7 +134,7 @@ func NewPlugins() *InOutPlugins {
 	}
 
 	// If we explicitly set Host header http output should not rewrite it
-	// Fix: https://github.com/buger/gor/issues/174
+	// Fix: https://github.com/chuhengyu/gor/issues/174
 	for _, header := range Settings.ModifierConfig.Headers {
 		if header.Name == "Host" {
 			Settings.OutputHTTPConfig.OriginalHost = true

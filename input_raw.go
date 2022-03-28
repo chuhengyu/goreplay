@@ -9,9 +9,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/buger/goreplay/capture"
-	"github.com/buger/goreplay/proto"
-	"github.com/buger/goreplay/tcp"
+	"github.com/chuhengyu/goreplay/capture"
+	"github.com/chuhengyu/goreplay/proto"
+	"github.com/chuhengyu/goreplay/tcp"
 )
 
 // RAWInputConfig represents configuration that can be applied on raw input

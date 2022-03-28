@@ -13,9 +13,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/buger/goreplay/ghz"
-	"github.com/buger/goreplay/metrics"
-	"github.com/buger/goreplay/size"
+	"github.com/chuhengyu/goreplay/ghz"
+	"github.com/chuhengyu/goreplay/metrics"
+	"github.com/chuhengyu/goreplay/size"
 )
 
 const (

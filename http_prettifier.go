@@ -8,7 +8,7 @@ import (
 	"net/http/httputil"
 	"strconv"
 
-	"github.com/buger/goreplay/proto"
+	"github.com/chuhengyu/goreplay/proto"
 )
 
 func prettifyHTTP(p []byte) []byte {

@@ -25,7 +25,7 @@ import (
 	"net/textproto"
 	"strings"
 
-	"github.com/buger/goreplay/byteutils"
+	"github.com/chuhengyu/goreplay/byteutils"
 )
 
 // CRLF In HTTP newline defined by 2 bytes (for both windows and *nix support)
@@ -290,7 +290,7 @@ func SetPathParam(payload, name, value []byte) []byte {
 // Returns modified payload
 func SetHost(payload, url, host []byte) []byte {
 	// If this is HTTP 1.0 traffic or proxy traffic it may include host right into path variable, so instead of setting Host header we rewrite Path
-	// Fix for https://github.com/buger/gor/issues/156
+	// Fix for https://github.com/chuhengyu/gor/issues/156
 	if path := Path(payload); bytes.HasPrefix(path, []byte("http")) {
 		hostStart := bytes.IndexByte(path, ':') // : position "https?:"
 		hostStart += 3                          // Skip 1 ':' and 2 '\'

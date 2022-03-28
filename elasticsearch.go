@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/buger/goreplay/proto"
+	"github.com/chuhengyu/goreplay/proto"
 
 	elastigo "github.com/mattbaird/elastigo/lib"
 )

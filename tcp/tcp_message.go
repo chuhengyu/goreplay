@@ -10,7 +10,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/buger/goreplay/proto"
+	"github.com/chuhengyu/goreplay/proto"
 )
 
 // TCPProtocol is a number to indicate type of protocol
@@ -350,7 +350,7 @@ func (parser *MessageParser) processPacket(pckt *Packet) {
 	m.DstAddr = pckt.DstIP.String()
 
 	parser.m[pckt.MessageID()] = m
-	
+
 	m.Start = pckt.Timestamp
 	m.parser = parser
 	parser.addPacket(m, pckt)

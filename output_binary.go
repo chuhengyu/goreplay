@@ -4,7 +4,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/buger/goreplay/size"
+	"github.com/chuhengyu/goreplay/size"
 )
 
 // BinaryOutputConfig struct for holding binary output configuration

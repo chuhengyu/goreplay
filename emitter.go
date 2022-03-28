@@ -7,8 +7,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/buger/goreplay/byteutils"
-	"github.com/buger/goreplay/ghz"
+	"github.com/chuhengyu/goreplay/byteutils"
+	"github.com/chuhengyu/goreplay/ghz"
 	"github.com/coocood/freecache"
 )
 

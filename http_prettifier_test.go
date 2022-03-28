@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/buger/goreplay/proto"
+	"github.com/chuhengyu/goreplay/proto"
 )
 
 func TestHTTPPrettifierGzip(t *testing.T) {

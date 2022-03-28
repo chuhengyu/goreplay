@@ -18,7 +18,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/buger/goreplay/ghz"
+	"github.com/chuhengyu/goreplay/ghz"
 )
 
 var (

@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/buger/goreplay/size"
+	"github.com/chuhengyu/goreplay/size"
 )
 
 func TestFileOutput(t *testing.T) {
